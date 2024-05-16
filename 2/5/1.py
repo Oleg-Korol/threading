@@ -6,3 +6,5 @@
 # def power(base, exponent):
 #     result =
 #   return f"{base} в степени {exponent} равно {result}"
+
+новые изменения
