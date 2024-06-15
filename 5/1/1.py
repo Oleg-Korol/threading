@@ -1,20 +1,37 @@
 import threading
+from concurrent.futures import ThreadPoolExecutor, wait, ALL_COMPLETED
+import time
 
-def write_to_file_without_lock(file_name, number):
-    with open(file_name, 'a') as f:
-        f.write(f"{number}\n")
-    print(f"Записано число {number}")
+cooks_names = ["Алексей", "Марина", "Сергей", "Ирина", "Николай"]
 
-# Имя файла для записи
-file_name = "numbers_without_lock.txt"
+pizzas = {
+    "Маргарита": 3,
+    "Пепперони": 2,
+    "Вегетарианская": 4,
+    "Четыре сыра": 5,
+    "Гавайская": 3
+}
 
-# Очистка файла перед записью
-with open(file_name, 'w') as f:
-    pass
+lock = threading.Lock()
 
-# Создание и запуск 5000 потоков
-for i in range(5000):
-    threading.Thread(target=write_to_file_without_lock, args=(file_name, i)).start()
+def cooker(shef,pizza_info):
+    with lock:
+        pizza_name, delay = pizza_info
+        print(f'{shef} начал(а) готовить пиццу "{pizza_name}".')
+        time.sleep(delay)
+        print(f'{shef} закончил(а) готовить пиццу "{pizza_name}".')
+
+def main():
+    with ThreadPoolExecutor(max_workers=5) as executor:
+        futures = executor.map(cooker,cooks_names,pizzas.items())
+        futures = list(futures)
+        print("Все пиццы приготовлены!")
+
+main()
+
+
+
+
 
 
 
